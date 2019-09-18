@@ -1,0 +1,56 @@
+---
+title: "exercise 4"
+author: "Aske Qvist"
+date: "18 September 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Exercise 4
+
+Include individual differences in your model of language development (in children). Identify the best model.
+
+Before fitting models, we discussed which variables could have an impact and whether they are fixed or random variables. From this discussion we agreed that ADOS/severity, verbal IQ, nonverbal IQ and socialization could have an impact on child MLU as fixed variables. 
+
+In addition to the interaction between time (visit) and diagnosis, the MLU of the children is also correlated with the interaction between time and verbal IQ for the first visit and the interaction between time and ADOS score at first visit. 
+Using AIC and BIC as a criterium, we compared models of increasing complexity and found that our new model is significantly better at describing the data (AIC changed from 572.46 to 504.06 and BIC changed from 603.37 to 550.43). Furthermore, the R-squared value increased from R^2=0.35 to R^2=0.65. Whereas the old model only explained 35% of the variance with the fixed effects, the new model explains 65%. 
+Thereby, this model significantly better explains the data when not taking overfitting and lack of interpretability into account.  
+
+Pseudo code:
+CHI_MLU ~ VISIT*Diagnosis + VISIT*verbalIQ1 + VISIT * severity1 + (1 + VISIT | SUBJ)
+
+# Code
+```{r}
+# loading packages 
+pacman::p_load(lmerTest, MuMIn,tidyverse, lme4)
+
+# loading data
+data <- read.csv("clean_data.csv")
+
+# relevel diagnosis
+data$Diagnosis <- relevel(data$Diagnosis, ref = "TD")
+
+# Our model with interaction between visit and diagnosis from exercise 2.
+model1_interaction <- lmer(CHI_MLU ~ VISIT * Diagnosis + (1 + VISIT|SUBJ), data=data)
+# Summary
+summary(model1_interaction)
+# R squared of the model from exercise 2
+r.squaredGLMM(model1_interaction)
+
+# Our improved complex model with more fixed effects
+CHI_MLU_best <-  lmer(CHI_MLU ~ VISIT*Diagnosis + VISIT*verbalIQ1 + VISIT*severity1 + (1 + VISIT|SUBJ), data=data)
+# Summary
+summary(CHI_MLU_best)
+# R squared of the new improved model
+r.squaredGLMM(CHI_MLU_best)
+# Comparison of the old and the new model
+anova(model1_interaction, CHI_MLU_best)
+
+```
+
+
+
+
