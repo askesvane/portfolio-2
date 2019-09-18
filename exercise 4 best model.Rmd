@@ -2,7 +2,11 @@
 title: "exercise 4"
 author: "Aske Qvist"
 date: "18 September 2019"
-output: html_document
+output: 
+  md_document:
+    variant: markdown_github
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
